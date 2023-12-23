@@ -168,9 +168,11 @@ def transform_time(sec):
 def split_video(video_path, start_time, end_time, out_path):
     ffmpeg.input(video_path).output(out_path, ss=start_time, to=end_time, c='copy').run()
 
+# 返回是否进行了切割处理
 def split_video_by_video_pk_info(video_pk_info, video_path, out_path_pre):
     start_time = -1
     end_time = 0
+    has_split = False
     for pk_info in video_pk_info:
         [is_pk, frame_index, current_time] = pk_info
         if not is_pk:
@@ -178,9 +180,12 @@ def split_video_by_video_pk_info(video_pk_info, video_path, out_path_pre):
         else:
             end_time = current_time
             if end_time > start_time and start_time != -1:
+                has_split = True
                 out_path = os.path.join(out_path_pre, str(start_time)+'_'+str(end_time)+'.mp4')
                 split_video(video_path, transform_time(start_time), transform_time(end_time), out_path)
                 start_time = -1
+    return has_split
+
 
 
 def get_files_from_dir(dir):
@@ -198,13 +203,15 @@ if __name__ == '__main__':
     # video_pk_info = test_video(video_path, 60)
     # print('video_pk_info:', video_pk_info)
     # split_video_by_video_pk_info(video_pk_info, video_path, 'out/')
-    files = get_files_from_dir('/Users/gagaprince/Downloads/20231008')
+    files = get_files_from_dir('I:\\直播')
     for video_path in files:
+        print('开始处理：', video_path)
         dir_tmp = os.path.dirname(video_path)
         folder_path = os.path.join(dir_tmp, 'out')
         os.makedirs(folder_path, exist_ok=True)
         video_pk_info = test_video(video_path, 60)
         print('video_pk_info:', video_pk_info)
-        split_video_by_video_pk_info(video_pk_info, video_path, folder_path)
-        os.remove(video_path)
+        is_split = split_video_by_video_pk_info(video_pk_info, video_path, folder_path)
+        if is_split:
+            os.remove(video_path)
 
