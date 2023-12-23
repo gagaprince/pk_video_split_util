@@ -145,7 +145,9 @@ def test_video(video_path, timedis=5):
                     video_pk_info.append([flag, next_frame_index, current_time])
                     print('切换判定：', [flag, next_frame_index, current_time])
                     # cv2.imwrite('out/' +str(flag)+'_'+str(spline_num)+'_'+ str(next_frame_index)+'_'+str(current_time) + '.png', frame)
-                    last_flag = flag
+                    last_flag = flags
+        else:
+            break
 
         last_frame_index = next_frame_index
         if last_frame_index == frame_count-1:
