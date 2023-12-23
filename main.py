@@ -197,13 +197,8 @@ def get_files_from_dir(dir):
 
     return files
 
-if __name__ == '__main__':
-    # cv_test_ispk('./3.jpg')
-    # video_path = './1.flv'
-    # video_pk_info = test_video(video_path, 60)
-    # print('video_pk_info:', video_pk_info)
-    # split_video_by_video_pk_info(video_pk_info, video_path, 'out/')
-    files = get_files_from_dir('I:\\直播')
+def exec_file_path(file_path):
+    files = get_files_from_dir(file_path)
     for video_path in files:
         print('开始处理：', video_path)
         dir_tmp = os.path.dirname(video_path)
@@ -214,4 +209,16 @@ if __name__ == '__main__':
         is_split = split_video_by_video_pk_info(video_pk_info, video_path, folder_path)
         if is_split:
             os.remove(video_path)
+
+if __name__ == '__main__':
+    # cv_test_ispk('./3.jpg')
+    # video_path = './1.flv'
+    # video_pk_info = test_video(video_path, 60)
+    # print('video_pk_info:', video_pk_info)
+    # split_video_by_video_pk_info(video_pk_info, video_path, 'out/')
+    exec_file_path('I:\\直播\\2023-10-09')
+    exec_file_path('I:\\直播\\2023-10-10')
+    exec_file_path('I:\\直播\\2023-10-11')
+    exec_file_path('I:\\直播\\2023-10-12')
+
 
