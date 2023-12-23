@@ -2,6 +2,8 @@ import cv2
 import numpy as np
 from datetime import timedelta
 import ffmpeg
+import os
+
 
 
 def get_face_cascade():
@@ -136,13 +138,13 @@ def test_video(video_path, timedis=5):
             if next_frame_index == 0:
                 video_pk_info.append([flag, 0, 0])
                 print('首帧判定：', [flag, 0, 0])
-                cv2.imwrite('out/' +str(flag)+'_'+str(spline_num)+'_'+ str(next_frame_index)+'_'+str(current_time) + '.png', frame)
+                # cv2.imwrite('out/' +str(flag)+'_'+str(spline_num)+'_'+ str(next_frame_index)+'_'+str(current_time) + '.png', frame)
                 last_flag = flag
             else:
                 if flag != last_flag:
                     video_pk_info.append([flag, next_frame_index, current_time])
                     print('切换判定：', [flag, next_frame_index, current_time])
-                    cv2.imwrite('out/' +str(flag)+'_'+str(spline_num)+'_'+ str(next_frame_index)+'_'+str(current_time) + '.png', frame)
+                    # cv2.imwrite('out/' +str(flag)+'_'+str(spline_num)+'_'+ str(next_frame_index)+'_'+str(current_time) + '.png', frame)
                     last_flag = flag
 
         last_frame_index = next_frame_index
@@ -176,13 +178,33 @@ def split_video_by_video_pk_info(video_pk_info, video_path, out_path_pre):
         else:
             end_time = current_time
             if end_time > start_time and start_time != -1:
-                split_video(video_path, transform_time(start_time), transform_time(end_time), out_path_pre+str(start_time)+'_'+str(end_time)+'.mp4')
+                out_path = os.path.join(out_path_pre, str(start_time)+'_'+str(end_time)+'.mp4')
+                split_video(video_path, transform_time(start_time), transform_time(end_time), out_path)
                 start_time = -1
+
+
+def get_files_from_dir(dir):
+    files = []
+    for filepath,dirnames,filenames in os.walk(dir):
+        for filename in filenames:
+            if str.endswith(filename,'.flv'):
+                files.append(os.path.join(filepath, filename))
+
+    return files
 
 if __name__ == '__main__':
     # cv_test_ispk('./3.jpg')
-    video_path = './1.flv'
-    video_pk_info = test_video(video_path, 60)
-    print('video_pk_info:', video_pk_info)
-    split_video_by_video_pk_info(video_pk_info, video_path, 'out/')
+    # video_path = './1.flv'
+    # video_pk_info = test_video(video_path, 60)
+    # print('video_pk_info:', video_pk_info)
+    # split_video_by_video_pk_info(video_pk_info, video_path, 'out/')
+    files = get_files_from_dir('/Users/gagaprince/Downloads/20231008')
+    for video_path in files:
+        dir_tmp = os.path.dirname(video_path)
+        folder_path = os.path.join(dir_tmp, 'out')
+        os.makedirs(folder_path, exist_ok=True)
+        video_pk_info = test_video(video_path, 60)
+        print('video_pk_info:', video_pk_info)
+        split_video_by_video_pk_info(video_pk_info, video_path, folder_path)
+        os.remove(video_path)
 

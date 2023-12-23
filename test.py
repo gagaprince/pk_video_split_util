@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import ffmpeg
+import os
 
 def get_face_cascade():
     return cv2.CascadeClassifier('xml/haarcascade_frontalface_default.xml')
@@ -56,11 +57,25 @@ def check_img_face(img_path, face_cascade, body_cascade):
 def split_video(video_path, start_time, end_time, out_path):
     ffmpeg.input(video_path).output(out_path, ss=start_time, to=end_time, c='copy').run()
 
+def get_files_from_dir(dir):
+    files = []
+    for filepath,dirnames,filenames in os.walk(dir):
+        for filename in filenames:
+            if str.endswith(filename,'.flv'):
+                files.append(os.path.join(filepath, filename))
+
+    return files
+
+
 if __name__ == '__main__':
     # img_path = './2.jpg'
     # check_img_face(img_path, get_face_cascade(), get_body_cascade())
-    video_path = './1.flv'
-    out_path = 'out/ss.flv'
-    start_time = '00:00:00'
-    end_time = '01:00:00'
-    split_video(video_path,start_time,end_time,out_path)
+    # video_path = './1.flv'
+    # out_path = 'out/ss.flv'
+    # start_time = '00:00:00'
+    # end_time = '01:00:00'
+    # split_video(video_path,start_time,end_time,out_path)
+    files = get_files_from_dir('/Users/gagaprince/Downloads/20231008')
+    print(files)
+    for file in files:
+        print(os.path.dirname(file))
