@@ -145,7 +145,7 @@ def test_video(video_path, timedis=5):
                     video_pk_info.append([flag, next_frame_index, current_time])
                     print('切换判定：', [flag, next_frame_index, current_time])
                     # cv2.imwrite('out/' +str(flag)+'_'+str(spline_num)+'_'+ str(next_frame_index)+'_'+str(current_time) + '.png', frame)
-                    last_flag = flags
+                    last_flag = flag
         else:
             break
 
@@ -218,8 +218,6 @@ if __name__ == '__main__':
     # video_pk_info = test_video(video_path, 60)
     # print('video_pk_info:', video_pk_info)
     # split_video_by_video_pk_info(video_pk_info, video_path, 'out/')
-    exec_file_path('I:\\直播\\2023-10-09')
-    exec_file_path('I:\\直播\\2023-10-10')
     exec_file_path('I:\\直播\\2023-10-11')
     exec_file_path('I:\\直播\\2023-10-12')
 
