@@ -3,6 +3,7 @@ from datetime import timedelta
 import cv2
 import math
 import os
+import sys
 
 def get_video_length(video_path):
     cap = cv2.VideoCapture(video_path)
@@ -36,12 +37,10 @@ def split_lite_video(video_path, time_step, out_pre, is_copy=True):
         split_video(video_path, transform_time(start_time), transform_time(end_time), output_path, is_copy)
 
 
-def main():
-    # split_lite_video('/Users/gagaprince/Downloads/0_2820.mp4', 300, '/Users/gagaprince/Downloads/5min')
-    split_lite_video('/Users/gagaprince/Downloads/5min/output_2.mp4', 13, '/Users/gagaprince/Downloads/5min/13s' )
-    split_lite_video('/Users/gagaprince/Downloads/5min/output_4.mp4', 10, '/Users/gagaprince/Downloads/5min/10s')
-    split_lite_video('/Users/gagaprince/Downloads/5min/output_5.mp4', 8, '/Users/gagaprince/Downloads/5min/8s')
-    split_lite_video('/Users/gagaprince/Downloads/5min/output_7.mp4', 20, '/Users/gagaprince/Downloads/5min/20s')
+def main(video_path, time_step):
+    dir_tmp = os.path.dirname(video_path)
+    out_pre = os.path.join(dir_tmp, 'out_'+time_step)
+    split_lite_video(video_path, 300, out_pre)
 
 if __name__ == '__main__':
-    main()
+    main(sys.argv[1], sys.argv[2])
