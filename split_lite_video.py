@@ -39,8 +39,8 @@ def split_lite_video(video_path, time_step, out_pre, is_copy=True):
 
 def main(video_path, time_step):
     dir_tmp = os.path.dirname(video_path)
-    out_pre = os.path.join(dir_tmp, 'out_'+time_step)
-    split_lite_video(video_path, 300, out_pre)
+    out_pre = os.path.join(dir_tmp, 'out_'+str(time_step))
+    split_lite_video(video_path, time_step, out_pre)
 
 if __name__ == '__main__':
-    main(sys.argv[1], sys.argv[2])
+    main(sys.argv[1], int(sys.argv[2]))
