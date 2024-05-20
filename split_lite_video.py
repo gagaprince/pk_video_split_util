@@ -4,6 +4,11 @@ import cv2
 import math
 import os
 import sys
+import subprocess
+
+
+# current_directory = os.getcwd()
+executable_path = './cutvideo'
 
 def get_video_length(video_path):
     cap = cv2.VideoCapture(video_path)
@@ -19,11 +24,27 @@ def transform_time(sec):
     return time_format
 
 def split_video(video_path, start_time, end_time, out_path, is_copy=True):
-    if is_copy:
-        ffmpeg.input(video_path).output(out_path, ss=start_time, to=end_time, c='copy').run()
-    else:
-        ffmpeg.input(video_path).output(out_path, ss=start_time, to=end_time).run()
+    result = subprocess.run([executable_path, start_time, end_time, video_path, out_path], capture_output=True, text=True)
+    # 打印C程序的标准输出
+    print("标准输出:", result.stdout)
+    # 打印C程序的标准错误输出
+    print("错误输出:", result.stderr)
+    # if is_copy:
+    #     ffmpeg.input(video_path).output(out_path, ss=start_time, to=end_time, c='copy').run()
+    # else:
+    #     ffmpeg.input(video_path).output(out_path, ss=start_time, to=end_time).run()
 
+
+# def split_lite_video(video_path, time_step, out_pre, is_copy=True):
+#     os.makedirs(out_pre, exist_ok=True)
+#     video_length = get_video_length(video_path)
+#     num_clips = math.ceil(video_length / time_step)
+#     for i in range(num_clips):
+#         start_time = i * time_step
+#         end_time = (i + 1) * time_step if (i + 1) * time_step < video_length else video_length
+#         output_path = os.path.join(out_pre, "output_{}.mp4".format(i))
+#         start_time = max(0, start_time - 1)
+#         split_video(video_path, transform_time(start_time), transform_time(end_time), output_path, is_copy)
 
 def split_lite_video(video_path, time_step, out_pre, is_copy=True):
     os.makedirs(out_pre, exist_ok=True)
@@ -33,8 +54,7 @@ def split_lite_video(video_path, time_step, out_pre, is_copy=True):
         start_time = i * time_step
         end_time = (i + 1) * time_step if (i + 1) * time_step < video_length else video_length
         output_path = os.path.join(out_pre, "output_{}.mp4".format(i))
-        start_time = max(0, start_time - 1)
-        split_video(video_path, transform_time(start_time), transform_time(end_time), output_path, is_copy)
+        split_video(video_path, str(start_time), str(end_time), output_path, is_copy)
 
 
 def main(video_path, time_step):

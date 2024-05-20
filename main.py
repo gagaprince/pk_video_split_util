@@ -175,7 +175,11 @@ def split_video_by_video_pk_info(video_pk_info, video_path, out_path_pre):
     start_time = -1
     end_time = 0
     has_split = False
+    max_split_count = 2
+    current_split_count = 0
     for pk_info in video_pk_info:
+        if current_split_count >= max_split_count: # 超过最大数量
+            break
         [is_pk, frame_index, current_time] = pk_info
         if not is_pk:
             start_time = current_time
@@ -184,7 +188,10 @@ def split_video_by_video_pk_info(video_pk_info, video_path, out_path_pre):
             if end_time > start_time and start_time != -1:
                 has_split = True
                 out_path = os.path.join(out_path_pre, str(start_time)+'_'+str(end_time)+'.mp4')
-                split_video(video_path, transform_time(start_time), transform_time(end_time), out_path)
+                # 加一些逻辑 超过5分钟的分片
+                if end_time-start_time > 300:
+                    current_split_count += 1
+                    split_video(video_path, transform_time(start_time), transform_time(end_time), out_path)
                 start_time = -1
     return has_split
 
@@ -218,7 +225,7 @@ if __name__ == '__main__':
     # video_pk_info = test_video(video_path, 60)
     # print('video_pk_info:', video_pk_info)
     # split_video_by_video_pk_info(video_pk_info, video_path, 'out/')
-    exec_file_path('I:\\直播\\2023-10-11')
-    exec_file_path('I:\\直播\\2023-10-12')
+    exec_file_path('/Users/wangzidong/Documents/liveDownload/2024-04-25')
+    # exec_file_path('I:\\直播\\2023-10-12')
 
 
