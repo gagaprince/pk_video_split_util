@@ -123,14 +123,14 @@ int cut_video(double from_seconds, double end_seconds, const char* in_filename, 
                 continue;
             }
             dts_start_from[pkt.stream_index] = pkt.dts;
-            printf("stream_index: %d, dts_start_from: %s\n", pkt.stream_index ,av_ts2str(dts_start_from[pkt.stream_index]));
+//            printf("stream_index: %d, dts_start_from: %s\n", pkt.stream_index ,av_ts2str(dts_start_from[pkt.stream_index]));
         }
         if (pts_start_from[pkt.stream_index] == 0) {
             if(pkt.pts<=0){
                 continue;
             }
             pts_start_from[pkt.stream_index] = pkt.pts;
-            printf("stream_index: %d, pts_start_from: %s\n", pkt.stream_index ,av_ts2str(pts_start_from[pkt.stream_index]));
+//            printf("stream_index: %d, pts_start_from: %s\n", pkt.stream_index ,av_ts2str(pts_start_from[pkt.stream_index]));
         }
 
         // log_packet(ifmt_ctx, &pkt, "in");
