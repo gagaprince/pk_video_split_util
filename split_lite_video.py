@@ -35,10 +35,10 @@ def split_video(video_path, start_time, end_time, out_path, is_copy=True):
     print("标准输出:", result.stdout)
     # 打印C程序的标准错误输出
     print("错误输出:", result.stderr)
-    if is_copy:
-        ffmpeg.input(video_path).output(out_path+'.mp4', ss=start_time, to=end_time, c='copy').run()
-    else:
-        ffmpeg.input(video_path).output(out_path+'.mp4', ss=start_time, to=end_time).run()
+    # if is_copy:
+    #     ffmpeg.input(video_path).output(out_path+'.mp4', ss=start_time, to=end_time, c='copy').run()
+    # else:
+    #     ffmpeg.input(video_path).output(out_path+'.mp4', ss=start_time, to=end_time).run()
 
 
 # def split_lite_video(video_path, time_step, out_pre, is_copy=True):
