@@ -75,7 +75,7 @@ int cut_video(double from_seconds, double end_seconds, const char* in_filename, 
         return -1;
     }
 
-    ret = av_seek_frame(ifmt_ctx, -1, from_seconds * AV_TIME_BASE, AVSEEK_FLAG_ANY);
+    ret = av_seek_frame(ifmt_ctx, -1, from_seconds * AV_TIME_BASE, AVSEEK_FLAG_BACKWARD);
     if (ret < 0) {
         fprintf(stderr, "Error seek\n");
         return -1;
@@ -118,16 +118,21 @@ int cut_video(double from_seconds, double end_seconds, const char* in_filename, 
             break;
         }
 
+
         if (dts_start_from[pkt.stream_index] == 0) {
-            if(pkt.dts<=0){
-                continue;
-            }
+//            if(pkt.dts!=pkt.pts){
+//                printf("dts!=pts jump");
+//                continue;
+//            }
             dts_start_from[pkt.stream_index] = pkt.dts;
 //            printf("stream_index: %d, dts_start_from: %s\n", pkt.stream_index ,av_ts2str(dts_start_from[pkt.stream_index]));
         }
         if (pts_start_from[pkt.stream_index] == 0) {
-            if(pkt.pts<=0){
-                continue;
+//            if(pkt.pts<=0){
+//                continue;
+//            }
+            if(pkt.pts>pkt.dts){
+                pkt.pts = pkt.dts;
             }
             pts_start_from[pkt.stream_index] = pkt.pts;
 //            printf("stream_index: %d, pts_start_from: %s\n", pkt.stream_index ,av_ts2str(pts_start_from[pkt.stream_index]));
@@ -135,9 +140,12 @@ int cut_video(double from_seconds, double end_seconds, const char* in_filename, 
 
         // log_packet(ifmt_ctx, &pkt, "in");
         // out_stream->time_base = in_stream->time_base;
-
+//        printf("old pkt.pts %d: %ld \n", pkt.stream_index, pkt.pts);
+//        printf("old pkt.dts %d: %ld \n", pkt.stream_index, pkt.dts);
         pkt.pts = av_rescale_q_rnd(pkt.pts - pts_start_from[pkt.stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX);
         pkt.dts = av_rescale_q_rnd(pkt.dts - dts_start_from[pkt.stream_index], in_stream->time_base, out_stream->time_base, AV_ROUND_NEAR_INF|AV_ROUND_PASS_MINMAX);
+//        printf("new pkt.pts %d: %ld \n", pkt.stream_index, pkt.pts);
+//        printf("new pkt.dts %d: %ld \n", pkt.stream_index, pkt.dts);
         if (pkt.pts < 0) {
             pkt.pts = 0;
         }
@@ -153,8 +161,10 @@ int cut_video(double from_seconds, double end_seconds, const char* in_filename, 
         // log_packet(ofmt_ctx, &pkt, "out");
 
         if (av_interleaved_write_frame(ofmt_ctx, &pkt) < 0) {
+            printf("dts_start_from[pkt.stream_index] : %ld \n", dts_start_from[pkt.stream_index]);
+            printf("pts_start_from[pkt.stream_index] : %ld \n", pts_start_from[pkt.stream_index]);
             fprintf(stderr, "Error muxing packet\n");
-            // break;
+//            break;
         }
         av_packet_unref(&pkt);
     }

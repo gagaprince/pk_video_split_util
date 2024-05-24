@@ -8,7 +8,7 @@ import subprocess
 
 
 # current_directory = os.getcwd()
-executable_path = '/data/home/my_work/pk_video_split_util/cmd/cutvideo'
+executable_path = '/data/work/pk_video_split_util/cmd/cutvideo'
 
 def get_video_length(video_path):
     cap = cv2.VideoCapture(video_path)
@@ -24,21 +24,21 @@ def transform_time(sec):
     return time_format
 
 def split_video(video_path, start_time, end_time, out_path, is_copy=True):
-    docker_video_path = video_path.replace('/Users/wangzidong', '/data/home')
-    docker_out_path = out_path.replace('/Users/wangzidong', '/data/home')
+    docker_video_path = video_path.replace('H:\\baidu', '/data/baidu').replace('\\', '/')
+    docker_out_path = out_path.replace('H:\\baidu', '/data/baidu').replace('\\', '/')
     print("video_path", video_path)
     print("out_path", out_path)
     print("docker_video_path", docker_video_path)
     print("docker_out_path", docker_out_path)
-    result = subprocess.run(['docker', 'exec', 'ffmpeg_con', executable_path, start_time, end_time, docker_video_path, docker_out_path], capture_output=True, text=True)
+    result = subprocess.run(['docker', 'exec', 'ffmpeg-con', executable_path, start_time, end_time, docker_video_path, docker_out_path], capture_output=True, text=True)
     # 打印C程序的标准输出
     print("标准输出:", result.stdout)
     # 打印C程序的标准错误输出
     print("错误输出:", result.stderr)
-    # if is_copy:
-    #     ffmpeg.input(video_path).output(out_path, ss=start_time, to=end_time, c='copy').run()
-    # else:
-    #     ffmpeg.input(video_path).output(out_path, ss=start_time, to=end_time).run()
+    if is_copy:
+        ffmpeg.input(video_path).output(out_path+'.mp4', ss=start_time, to=end_time, c='copy').run()
+    else:
+        ffmpeg.input(video_path).output(out_path+'.mp4', ss=start_time, to=end_time).run()
 
 
 # def split_lite_video(video_path, time_step, out_pre, is_copy=True):
